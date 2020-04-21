@@ -44,15 +44,29 @@ def main_menu():
 		print('Invalid input')
 
 def show_all():
+	from datetime import datetime
+
 	for item in db:
+		birtdate = datetime.strptime(item['birthday'], '%B %d, %Y')
+		age = calculate_age(birtdate)
+
 		print(f'''
 
 		ID: {item['id']}
 		Full name: {item['first_name'] + ' ' + item['last_name']}
 		Birthday: {item['birthday']}
-		Age:
+		Age: {age}
 			
 			''')
+
+def calculate_age(born):
+	from datetime import date
+
+	today = date.today()
+	return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
+
+
 
 
 main_menu()
