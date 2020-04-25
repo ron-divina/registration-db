@@ -30,7 +30,10 @@ def main_menu():
 	print("------------------------")
 	print("1. Show all\n2. Birthdays today\n3. Add\n4. Delete\n5. Exit")
 	print("------------------------")
-	menu_input = int(input("Enter menu item: "))
+	try:
+		menu_input = int(input("Enter menu item: "))
+	except ValueError:
+		main_menu()
 
 	if menu_input == 1:
 		show_all()
@@ -39,7 +42,7 @@ def main_menu():
 	elif menu_input == 3:
 		add_item()
 	elif menu_input == 4:
-		pass
+		delete_item()
 	elif menu_input == 5:
 		exit()
 	else:
@@ -73,14 +76,17 @@ def search_by_id(user_id):
 		age = calculate_age(birtdate)
 
 		if user_id == item['id']:
-			print(f'''
+			return f'''
 
 		ID: {item['id']}
 		Full name: {item['first_name'] + ' ' + item['last_name']}
 		Birthday: {item['birthday']}
 		Age: {age}
 			
-			''')
+			'''
+			
+
+	return None
 
 
 def calculate_age(born):
@@ -102,7 +108,7 @@ def birthdays_today():
 
 		if (today.month, today.day) == (birtdate.month, birtdate.day):
 			with_birthday = True
-			search_by_id(item['id'])
+			print(search_by_id(item['id']))
 
 	if with_birthday == False:
 		print('No one has a birthday today.')
@@ -129,8 +135,8 @@ def add_item():
 				continue
 			is_taken = check_id(input_id)
 
-		input_first_name = input('Enter first name: ')
-		input_last_name = input('Enter last name: ')
+		input_first_name = input('Enter first name: ').strip()
+		input_last_name = input('Enter last name: ').strip()
 		input_birthday = input('Enter birthday: ')
 		is_invalid_birthday = check_birthday(input_birthday.capitalize())
 		while is_invalid_birthday:
@@ -171,6 +177,27 @@ def check_birthday(birthday):
 		return False
 	except ValueError:
 		return True
+
+def delete_item():
+	input_id = int(input('Enter ID of the record you want to delete: '))
+	
+	record = search_by_id(input_id)
+	if record is None:
+		print('Record doesn\'t exist.')
+	else:
+		input_response = input(f'Continue deleting {record} (Y/N) ')
+		if input_response.upper() == 'Y':
+			i = 0
+			for item in db:
+				if item['id'] == input_id:
+					del db[i]
+					print('Record deleted.\n')
+				i += 1
+		else:
+			print('Nothing deleted.')
+
+	input('Press any key to continue...')
+	main_menu()
 
 main_menu()
 
